@@ -1,0 +1,5 @@
+---
+# app.vagrant/handlers
+- name: restart supervisor
+  sudo: yes
+  service: name=supervisord state=restarted

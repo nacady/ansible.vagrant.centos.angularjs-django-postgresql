@@ -1,0 +1,14 @@
+---
+# memcache/tasks
+- name: install
+  yum: name=memcached state=present
+  sudo: yes
+
+- name: add chkconfig
+  command: chkconfig --add memcached
+  sudo: yes
+
+- name: set chkconfig
+  command: chkconfig memcached on
+  notify: restart memcached
+  sudo: yes

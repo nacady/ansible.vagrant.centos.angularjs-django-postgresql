@@ -1,0 +1,21 @@
+---
+# mysql/tasks
+- name: make a working directory
+  file: path={{home}}/src/mysql state=directory
+
+- name: download mysql rpm
+  get_url: url=http://downloads.mysql.com/archives/mysql-5.6/MySQL-{{item}}-{{mysql_rpm_version}}.rpm dest={{home}}/src/mysql/MySQL-{{item}}-{{mysql_rpm_version}}.rpm
+  with_items:
+    - client
+    - shared-compat
+    - devel
+    - shared
+
+- name: install mysql
+  yum: name="{{home}}/src/mysql/MySQL-{{item.pkg}}-{{mysql_rpm_version}}.rpm" state=present
+  with_items:
+    - pkg: client
+    - pkg: shared-compat
+    - pkg: devel
+    - pkg: shared
+  sudo: yes

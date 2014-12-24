@@ -1,0 +1,76 @@
+# color
+export LS_COLORS;LS_COLORS="no=00:fi=00:di=00;36:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:ex=01;32:*.cmd=01;32:*.exe=01;32:*.com=01;32:*.btm=01;32:*.bat=01;32:*.sh=01;32:*.csh=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.cpio=01;31:*.jpg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:"
+export ZLS_COLORS;ZLS_COLORS="${(s.:.)LS_COLORS}"
+zmodload -i zsh/compctl
+zmodload -i zsh/complete
+zmodload -i zsh/complist
+
+# opt
+setopt auto_name_dirs auto_remove_slash
+setopt extended_history hist_ignore_dups hist_ignore_space prompt_subst append_history
+setopt pushd_ignore_dups rm_star_silent
+setopt extended_glob no_beep always_last_prompt
+setopt cdable_vars sh_word_split auto_param_keys nohup
+unsetopt automenu
+
+# function
+function setenv () {
+    if [ $# -eq 0 ]; then
+        /usr/bin/env
+    else
+        export $1=$*[2,-1]
+    fi
+}
+# tcsh鬚ｨ蜊倩ｪ槫炎髯､
+tcsh-backward-delete-word () {
+    local WORDCHARS="${WORDCHARS:s#/#}"
+    zle backward-delete-word
+}
+zle -N tcsh-backward-delete-word
+
+# bindkey
+bindkey -e
+bindkey 'h' tcsh-backward-delete-word
+bindkey '' kill-region
+bindkey '^[p' history-beginning-search-backward
+bindkey '^[n' history-beginning-search
+
+# alias
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ls='ls -GF'
+alias ll='ls -Flh'
+alias la='ls -Fa'
+alias lla='ls -Falh'
+alias grep='grep --color'
+#alias kinput2="kinput2 -wnnenvrc /etc/FreeWnn/ja/wnnenvrc"
+#alias a2ps="a2ps -o -"
+#alias flute='ssh j8306045@flute'
+#alias psmerge='gs -q -dNOPAUSE -dBATCH -sDEVICE=pswrite -sOutputFile=- -c save pop -f'
+
+alias ssh='ssh -A'
+
+# set
+autoload -U colors && colors
+PROMPT='%{$fg[red]%}<%n%{$fg[white]%}@%{$fg[green]%}${HOST}%{$fg[red]%}> %{$reset_color%}'
+RPROMPT=$'%{\e[37m%}[%~]%{\e[0m%}'
+      
+HISTSIZE=10000
+HISTFILE=~/.zsh_history
+SAVEHIST=10000
+
+# compctl
+hostnames=( spider cosmos orchid mail adonis camellia www rose dahlia prunus armeria flute lotus )
+#compctl -g '*(/) *(@)' cd
+compctl -/ cd
+compctl -c man which
+compctl -E printenv setenv
+compctl -g '*.tex' + tex jtex ptex latex jlatex platex
+compctl -g '*.dvi' xdvi dviselect dvips dvi2ps
+
+#setenv
+export LESS;LESS='-R -X'
+#export PATH;PATH=.:"$PATH":/usr/sbin:/sbin:/opt/local/bin:/Applications/Ghostscript.app:/Applications/Ghostscript.app/bin
+export PAGER;PAGER=less
+export SVN_EDITOR;SVN_EDITOR=/Applications/Emacs.app/Contents/MacOS/Emacs

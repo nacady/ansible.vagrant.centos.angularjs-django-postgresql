@@ -1,0 +1,40 @@
+---
+# mysql-server/tasks
+- name: make a working directory
+  file: path={{home}}/src/mysql state=directory
+
+- name: download mysql rpm
+  get_url: url=http://downloads.mysql.com/archives/mysql-5.6/MySQL-{{item}}-{{mysql_rpm_version}}.rpm dest={{home}}/src/mysql/MySQL-{{item}}-{{mysql_rpm_version}}.rpm
+  with_items:
+    - server
+
+- name: install mysql
+  yum: name="{{home}}/src/mysql/MySQL-{{item.pkg}}-{{mysql_rpm_version}}.rpm" state=present
+  with_items:
+    - pkg: server
+  notify: restart mysql
+  sudo: yes
+
+- service: name=mysql state=started
+  sudo: yes
+
+- name: add chkconfig
+  command: chkconfig --add mysql
+  sudo: yes
+
+- name: set chkconfig
+  command: chkconfig mysql on
+  sudo: yes
+
+- name: update first time password
+  shell: mysqladmin -uroot -p$(awk '{print $NF}' /root/.mysql_secret | head -n1) password {{mysql_root_password}} || true
+  ignore_errors: True
+  sudo: yes
+
+- name: pip install
+  pip: name=mysql-python executable=pip2.6
+  sudo: yes
+
+- name: copy my.cnf
+  copy: src=my.cnf dest=/root/.my.cnf mode=0600
+  sudo: yes

@@ -1,0 +1,62 @@
+---
+# group_vars
+hostname: app-vm
+hostname_short: app-vm
+
+user: vagrant
+home: /home/{{user}}
+
+# app
+app: app
+app_python_bin_version: 3.4
+dir_app: "/var/www/{{app}}"
+dir_venv: "{{dir_app}}"
+app_settings: app.settings.local
+
+# nginx
+nginx_rpm: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+server_name: app.com
+
+# python
+python_bin_version: 2.7
+python_version: 2.7.8
+python_bin: "/usr/local/bin/python{{python_bin_version}}"
+python_souce_file: "Python-{{python_version}}.tar.xz"
+url_python_souce: https://www.python.org/ftp/python/{{python_version}}/{{python_souce_file}}
+
+# python3
+python3_bin_version: 3.4
+python3_version: 3.4.1
+python3_bin: "/usr/local/bin/python{{python3_bin_version}}"
+python3_souce_file: "Python-{{python3_version}}.tar.xz"
+url_python3_souce: https://www.python.org/ftp/python/{{python3_version}}/{{python3_souce_file}}
+
+# mysql
+mysql_rpm_version: 5.6.12-2.el6.x86_64
+mysql_yum_rpm: http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm
+mysql_root_password: root
+
+# rabbitmq
+epel_rpm: http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rabbitmq_rpm: http://www.rabbitmq.com/releases/rabbitmq-server/v3.3.5/rabbitmq-server-3.3.5-1.noarch.rpm
+
+# sentry
+dir_sentry: /var/www/sentry
+url_sentry: sentry.app.dev
+
+# postgres
+postgresql_version: 9.3
+postgresql_encoding: 'UTF-8'
+postgresql_locale: C
+
+# node
+nodejs_global_packages:
+  - yo
+  - generator-angular
+  - grunt-cli
+  - bower
+
+# git
+git_prefix: "/usr/local"
+git_version: "2.2.0"
+git_source_url: "https://nodeload.github.com/git/git/tar.gz/v{{git_version}}"

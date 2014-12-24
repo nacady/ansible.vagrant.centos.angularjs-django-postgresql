@@ -1,0 +1,15 @@
+---
+# app.production/tasks
+- name: make log directory
+  file: path={{dir_app}}/log/{{item}} state=directory owner=vagrant group=vagrant
+  with_items:
+    - uwsgi
+    - celery
+
+- name: copy uwsgi.ini for supervisor
+  template: src=uwsgi.ini dest=/etc/supervisord.d/
+  notify: restart supervisor
+
+- name: copy celery.ini for supervisor
+  template: src=celery.ini dest=/etc/supervisord.d/
+  notify: restart supervisor

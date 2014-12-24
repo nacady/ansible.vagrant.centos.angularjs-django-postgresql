@@ -1,0 +1,52 @@
+# Config file for PostgreSQL
+
+#- name: Config | Stop the Cluster 
+#  command: service postgresql-{{ postgresql_version }} stop
+#  when: postgresql_cluster_reset
+#
+#- name: Config | Reset the cluster - drop the existing one
+#  shell: rm -rf {{ postgresql_conf_directory }}
+#  when: postgresql_cluster_reset
+#
+#- name: Config | Reset the cluster - create a new one (with specified encoding and locale)
+#  command: service postgresql-{{ postgresql_version }} initdb {{postgresql_cluster_name}}
+#  notify: restart postgresql
+#  when: postgresql_cluster_reset
+
+- name: Initialise Postgresql Database
+  command: service postgresql-{{ postgresql_version }} initdb {{postgresql_cluster_name}}
+
+- name: Ensure PostgreSQL is running
+  service: name=postgresql-{{ postgresql_version }} state=started enabled=yes
+  notify:
+    - restart postgresql
+
+- name: localhost trust on pg_hba.conf
+  replace:
+    dest: "{{postgresql_conf_directory}}/pg_hba.conf"
+    regexp: '(^{{item}}.*)(ident|peer)$'
+    replace: '\1trust'
+    backup: yes
+  with_items:
+    - local
+    - host
+
+#- name: Configure | Update configuration - (pg_hba.conf)
+#  template:
+#    src: pg_hba.conf.j2
+#    dest: "{{postgresql_conf_directory}}/pg_hba.conf"
+#    owner: "{{postgresql_admin_user}}"
+#    group: "{{postgresql_admin_user}}"
+#    mode: 0640
+#
+#- name: Configure | Update configuration - (postgresql.conf)
+#  template:
+#    src: postgresql.conf.j2
+#    dest: "{{postgresql_conf_directory}}/postgresql.conf"
+#    owner: "{{postgresql_admin_user}}"
+#    group: "{{postgresql_admin_user}}"
+#    mode: 0640
+
+- name: Reload The PostgreSQL Configuration
+  command: service postgresql-{{ postgresql_version }} restart
+

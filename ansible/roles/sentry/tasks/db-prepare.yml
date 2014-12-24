@@ -1,0 +1,35 @@
+---
+# sentry/tasks
+#- mysql_db: name=sentry state=present
+#- mysql_user: name=sentry password=sentry priv=sentry.*:ALL state=present
+
+- name: db
+  postgresql_db:
+    name: "{{ item.name }}"
+    encoding: "{{postgresql_encoding}}"
+    lc_collate: "{{postgresql_locale}}"
+    lc_ctype: "{{postgresql_locale}}"
+    template: "template0"
+    state: present
+  with_items:
+    - name: sentry
+
+- name: user
+  postgresql_user:
+    name: "{{item.name}}"
+    password: "{{item.pass | default('pass')}}"
+    state: present
+    login_host: "{{item.host | default('localhost')}}"
+    db: "{{item.db}}"
+    priv: "{{item.priv | default('ALL')}}"
+    login_host: "{{item.host | default('localhost')}}"
+  with_items:
+    - name: sentry
+      pass: sentry
+      db: sentry
+
+- name: init sentry
+  command: "{{dir_sentry}}/bin/sentry init /etc/sentry.conf.py creates=/etc/sentry.conf.py"
+
+- name: upgrade sentry
+  command: "{{dir_sentry}}/bin/sentry --config=/etc/sentry.conf.py upgrade"

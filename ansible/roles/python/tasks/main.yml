@@ -1,0 +1,7 @@
+---
+# python
+- stat: path=/usr/local/bin/pip{{python_bin_version}}
+  register: st
+
+- include: install.yml
+  when: st.stat.exists == False

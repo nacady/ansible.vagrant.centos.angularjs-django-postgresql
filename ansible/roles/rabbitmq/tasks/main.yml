@@ -1,0 +1,23 @@
+---
+# rabbitmq/tasks
+- name: install
+  yum: name={{rabbitmq_rpm}} state=present
+  notify: restart rabbitmq
+
+- service: name=rabbitmq-server state=started
+
+- name: add chkconfig
+  command: chkconfig --add rabbitmq-server
+
+- name: set chkconfig
+  command: chkconfig rabbitmq-server on
+
+- rabbitmq_vhost: name={{app}} state=present
+
+- rabbitmq_user: user={{app}}
+                 password={{app}}
+                 vhost={{app}}
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present

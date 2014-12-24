@@ -1,0 +1,41 @@
+---
+- hosts: 127.0.0.1
+  user: vagrant
+  vars_files:
+    - group_vars/vagrant.yml
+  vars:
+    host_locale: "en_US.UTF-8"
+    host_locale_dict:
+      LANG: "{{ host_locale }}"
+      LC_COLLATE: "{{ host_locale }}"
+      LC_CTYPE: "{{ host_locale }}"
+      LC_MESSAGES: "{{ host_locale }}"
+      LC_MONETARY: "{{ host_locale }}"
+      LC_NUMERIC: "{{ host_locale }}"
+      LC_TIME: "{{ host_locale }}"
+      LC_ALL: "{{ host_locale }}"
+  roles:
+    - hostname
+    - zsh
+    - zsh.vagrant
+    -
+      role: nginx
+      sudo: yes
+    - python3
+    - memcache
+    -
+      role: rabbitmq
+      sudo: yes
+    -
+      role: patrik.uytterhoeven.PostgreSQL-For-RHEL6x
+      sudo: yes
+    -
+      role: supervisor
+      sudo: yes
+    - app
+    - app.vagrant
+    -
+      role: mjmaisey.ansible-nodejs
+      sudo: yes
+    - ruby
+    - git

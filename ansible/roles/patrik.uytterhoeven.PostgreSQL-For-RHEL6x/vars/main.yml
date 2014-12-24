@@ -1,0 +1,23 @@
+---
+# vars file for PostgreSQL
+
+# PostgreSQL Repo File
+pgsql_repo: 'http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-redhat93-9.3-1.noarch.rpm'
+
+# Basic settings
+postgresql_admin_user: "postgres"
+postgresql_cluster_name: ""
+
+# postgresql.conf
+
+#------------------------------------------------------------------------------
+# FILE LOCATIONS
+#------------------------------------------------------------------------------
+# Location of postgres configuration files here
+postgresql_conf_directory: "/var/lib/pgsql/{{postgresql_version}}/data"
+# HBA (Host Based Authentication) file
+postgresql_hba_file: "{{postgresql_conf_directory}}/pg_hba.conf"
+# Ident configuration file
+postgresql_ident_file: "{{postgresql_conf_directory}}/pg_ident.conf"
+# Use data in another directory
+postgresql_data_directory: "/var/lib/pgsql/{{postgresql_version}}/data"

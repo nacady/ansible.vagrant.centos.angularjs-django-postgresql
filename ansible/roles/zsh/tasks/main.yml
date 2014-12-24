@@ -1,0 +1,29 @@
+---
+# zsh/tasks
+- yum: name=zsh state=present
+  sudo: yes
+
+- name: chsh
+  user: name={{user}} shell=/bin/zsh
+  sudo: yes
+
+- name: copy .zshrc
+  copy: src=zshrc dest={{home}}/.zshrc
+
+- name: set PATH for postgresql
+  lineinfile:
+    dest: "{{item}}"
+    regexp: "^export PATH.* # postgresql"
+    line: "export PATH=/usr/pgsql-{{postgresql_version}}/bin:$PATH # postgresql"
+  with_items:
+    - "{{home}}/.bash_profile"
+    - "{{home}}/.zshrc"
+
+- name: set PATH for gem
+  lineinfile:
+    dest: "{{item}}"
+    regexp: "^export PATH.* # gem"
+    line: "export PATH=~/.gem/ruby/1.8/bin:$PATH # gem"
+  with_items:
+    - "{{home}}/.bash_profile"
+    - "{{home}}/.zshrc"

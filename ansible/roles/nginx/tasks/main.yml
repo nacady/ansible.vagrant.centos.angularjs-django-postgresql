@@ -1,0 +1,37 @@
+---
+# nginx/tasks
+- name: add yum repo
+  command: rpm -ivh --force {{nginx_rpm}}
+
+- name: install
+  yum: name=nginx state=present
+
+- name: add chkconfig
+  command: chkconfig --add nginx
+
+- name: set chkconfig
+  command: chkconfig nginx on
+
+- file: path=/etc/nginx/conf.d/{{item}} state=absent
+  with_items:
+    - default.conf
+    - example_ssl.conf
+
+- name: make log directory
+  file: path=/var/log/nginx/{{server_name}} state=directory
+
+- name: conf files
+  copy: src={{item}} dest=/etc/nginx/
+  with_items:
+    - auth_basic.conf
+    - django.conf
+    - htpasswd
+  notify: restart nginx
+
+- name: www.conf file
+  template: src=www.conf dest=/etc/nginx/
+  notify: restart nginx
+
+- name: server conf file
+  template: src=server.conf dest=/etc/nginx/conf.d/{{server_name}}.conf
+  notify: restart nginx

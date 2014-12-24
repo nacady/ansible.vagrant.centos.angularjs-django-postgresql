@@ -1,0 +1,17 @@
+---
+# zsh.vagrant/tasks
+- stat: path={{home}}/.zsh_history
+  register: st
+
+- file: path=/vagrant/.zsh_history state=touch
+- file: src=/vagrant/.zsh_history dest={{home}}/.zsh_history state=link
+  when: st.stat.exists == False
+
+- name: set to copy zsh_history on logout
+  lineinfile:
+    dest: "{{item}}"
+    regexp: "^\\\\cp ~/.zsh_history"
+    line: "\\cp ~/.zsh_history /vagrant/"
+    create: yes
+  with_items:
+    - "{{home}}/.zlogout"

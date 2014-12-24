@@ -1,0 +1,47 @@
+---
+# sentry/tasks
+- yum: name={{item}} state=latest
+  with_items:
+    - python-devel
+    - python-psycopg2
+    - python-simplejson
+  sudo: yes
+
+- name: install pip
+  command: easy_install-2.6 pip creates=/usr/bin/pip2.6
+  sudo: yes
+
+- name: install virtualenv
+  command: pip2.6 install virtualenv creates=/usr/bin/virtualenv
+  sudo: yes
+
+- name: make app directory
+  #command: sudo mkdir -p {{dir_sentry}} creates="{{dir_sentry}}"
+  file: path={{dir_sentry}} state=directory owner=vagrant group=vagrant
+  register: result
+  sudo: yes
+
+- name: init virtualenv
+  command: /usr/bin/virtualenv {{dir_sentry}} creates="{{dir_sentry}}/bin/activate"
+
+- name: pip install
+  pip: name={{item}} virtualenv={{dir_sentry}}
+  environment:
+    PATH: "/usr/pgsql-{{postgresql_version}}/bin:{{ansible_env.PATH}}"
+  with_items:
+     - sentry
+     - mysql-python
+     - psycopg2
+
+- template: src=sentry.conf.py dest=/etc/sentry.conf.py
+  sudo: yes
+
+- name: config nginx
+  template: src=nginx.conf dest=/etc/nginx/conf.d/{{url_sentry}}
+  sudo: yes
+
+- name: make a nginx log directory
+  file: path=/var/log/nginx/{{url_sentry}} state=directory owner=nginx group=nginx
+  sudo: yes
+
+- include: db-prepare.yml

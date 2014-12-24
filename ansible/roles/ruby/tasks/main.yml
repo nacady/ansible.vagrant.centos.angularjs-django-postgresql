@@ -1,0 +1,28 @@
+---
+# ruby/tasks
+- name: install
+  yum: name={{ item }} state=present
+  sudo: yes
+  with_items:
+    - ruby
+    - ruby-devel
+    - rubygems
+
+- gem: name={{item}} user_install=yes state=present
+  with_items:
+    - compass
+    - sass
+    - compass-core
+    - compass-import-once
+    - chunky_png
+    - rb-fsevent
+
+- command: "gem install {{item}} -y --no-ri --no-rdoc"
+  sudo: yes
+  with_items:
+    - compass
+    - sass
+    - compass-core
+    - compass-import-once
+    - chunky_png
+    - rb-fsevent

@@ -1,0 +1,40 @@
+---
+# app/tasks
+- name: install virtualenv
+  command: /usr/local/bin/pip{{app_python_bin_version}} install virtualenv
+  sudo: yes
+
+- name: make app directory
+  file: path={{dir_app}} state=directory owner=vagrant group=vagrant
+  sudo: yes
+
+- name: make log directory
+  file: path={{dir_app}}/log/uwsgi state=directory
+
+- name: init virtualenv
+  command: "/usr/local/bin/virtualenv -p python{{app_python_bin_version}} {{dir_venv}}"
+
+- name: db
+  postgresql_db:
+    name: "{{item.app}}"
+    encoding: "{{postgresql_encoding}}"
+    lc_collate: "{{postgresql_locale}}"
+    lc_ctype: "{{postgresql_locale}}"
+    template: "template0"
+    state: present
+  with_items:
+    - app: "{{app}}"
+
+- name: dbuser
+  postgresql_user:
+    name: "{{item.name}}"
+    password: "{{item.pass | default('pass')}}"
+    state: present
+    login_host: "{{item.host | default('localhost')}}"
+    db: "{{item.db}}"
+    priv: "{{item.priv | default('ALL')}}"
+    login_host: "{{item.host | default('localhost')}}"
+  with_items:
+    - name: "{{app}}"
+      pass: "{{app}}"
+      db: "{{app}}"

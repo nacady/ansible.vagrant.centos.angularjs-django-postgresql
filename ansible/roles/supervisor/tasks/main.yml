@@ -1,0 +1,30 @@
+---
+# supervisor/tasks
+- pip: name=supervisor state=present
+  notify: restart supervisor
+
+- name: init conf
+  shell: "echo_supervisord_conf > /etc/supervisord.conf"
+
+- name: make conf directory
+  file: path=/etc/supervisord.d state=directory
+
+- name: add include to conf
+  lineinfile:
+    dest: /etc/supervisord.conf
+    regexp: '^[[]include.*'
+    line: '[include]\nfiles = /etc/supervisord.d/*.ini'
+
+- name: add include to conf
+  replace:
+    dest: /etc/supervisord.conf
+    regexp: '^[[]include(.|\n)*'
+    replace: '[include]\nfiles = /etc/supervisord.d/*.ini\n'
+
+- copy: src=supervisord dest=/etc/init.d/supervisord mode=755
+  
+- name: add chkconfig
+  command: chkconfig --add supervisord
+
+- name: set chkconfig
+  command: chkconfig supervisord on

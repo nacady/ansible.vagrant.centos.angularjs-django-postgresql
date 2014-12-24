@@ -1,0 +1,32 @@
+---
+# git/tasks
+- yum: name="{{item}}" state=present
+  sudo: yes
+  with_items:
+    - make
+    - curl-devel
+    - gcc
+    - openssl-devel
+    - expat-devel
+    - cpan
+    - gettext
+    - asciidoc
+    - xmlto
+
+- name: make a working directory
+  file: path={{home}}/src state=directory
+
+- name: download
+  get_url:
+    url: "{{git_source_url}}"
+    dest: "{{home}}/src/git-{{git_version}}.tar.gz"
+
+- name: unpack
+  command: tar -xvzf {{home}}/src/git-{{git_version}}.tar.gz chdir={{home}}/src creates={{home}}/src/git-{{git_version}}/README
+
+- name: make
+  command: make prefix={{git_prefix}} all chdir={{home}}/src/git-{{git_version}}
+
+- name: make install
+  command: make prefix={{git_prefix}} install chdir={{home}}/src/git-{{git_version}}
+  sudo: yes

@@ -1,0 +1,22 @@
+---
+# hostname/tasks
+- name: set
+  hostname:
+    name: "{{hostname}}"
+  sudo: yes
+
+- name: /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^127.0.0.1"
+    line: "127.0.0.1{{'\t'}}{{hostname}}{% if hostname != hostname_short %}{{'\t'}}{{hostname_short}}{% endif %}{{'\t'}}localhost"
+    state: present
+  sudo: yes
+
+- name: /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "^::1"
+    line: "::1{{'\t\t'}}{{hostname}}{% if hostname != hostname_short %}{{'\t'}}{{hostname_short}}{% endif %}{{'\t'}}localhost ip6-localhost ip6-loopback"
+    state: present
+  sudo: yes

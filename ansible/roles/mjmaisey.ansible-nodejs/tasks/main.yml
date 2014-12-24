@@ -1,0 +1,12 @@
+---
+# Main tasks file for node.js role
+
+- name: Install npm and node via EPEL yum repo
+  yum: name=npm enablerepo=epel state=present
+
+- name: update npm
+  npm: global=yes name=npm state=latest
+
+- name: Install global packages
+  npm: global=yes name={{ item }} state=present
+  with_items: nodejs_global_packages

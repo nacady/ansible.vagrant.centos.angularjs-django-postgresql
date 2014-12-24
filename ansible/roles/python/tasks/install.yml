@@ -1,0 +1,52 @@
+---
+# python/tasks
+- name: yum install packages to compile python
+  yum: name="{{item}}" state=latest
+  with_items:
+    - "@Development tools"
+    - zlib-devel
+    - bzip2-devel
+    - openssl-devel
+    - ncurses-devel
+    - sqlite-devel
+    - readline-devel
+    - tk-devel
+  sudo: yes
+
+- name: make a working directory
+  file: path={{home}}/src state=directory
+
+- name: download python souce
+  get_url: url={{url_python_souce}} dest={{home}}/src/{{python_souce_file}}
+
+- name: expand source
+  command: tar xf {{home}}/src/{{python_souce_file}} chdir={{home}}/src creates={{home}}/src/Python-{{python_version}}
+
+- name: configure
+  command: ./configure chdir={{home}}/src/Python-{{python_version}}
+
+- name: make
+  command: make chdir={{home}}/src/Python-{{python_version}}
+
+- name: altinstall
+  command: make altinstall chdir={{home}}/src/Python-{{python_version}}
+  sudo: yes
+
+- name: download get-pip
+  get_url: url=https://raw.github.com/pypa/pip/master/contrib/get-pip.py dest={{home}}/src/get-pip.py
+
+- name: install pip
+  command: >
+    python{{python_bin_version}} get-pip.py
+    creates=/usr/local/bin/pip{{python_bin_version}}
+    chdir={{home}}/src
+  environment:
+    PATH: "/usr/local/bin:{{ansible_env.PATH}}"
+  sudo: yes
+
+- name: install pip
+  shell: >
+    python2.6 get-pip.py
+    creates=/usr/bin/pip2.6
+    chdir={{home}}/src
+  sudo: yes

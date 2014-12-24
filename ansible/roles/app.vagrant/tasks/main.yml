@@ -1,0 +1,21 @@
+---
+# app.vagrant/tasks
+- file: src=/vagrant dest={{dir_app}}/current state=link
+
+- file: path=~/node_modules state=directory
+- file: src=~/node_modules dest=/vagrant/angular/node_modules state=link
+
+- name: cd on bash, zsh
+  lineinfile: "dest={{item}} regexp='^cd ' line='cd /vagrant'"
+  with_items:
+    - "{{home}}/.bashrc"
+    - "{{home}}/.zshrc"
+
+- pip:
+    requirements: /vagrant/requirements.txt
+    virtualenv: "{{dir_venv}}"
+
+- name: copy app.ini for supervisor
+  template: src=app.ini dest=/etc/supervisord.d/
+  sudo: yes
+  notify: restart supervisor

@@ -1,0 +1,43 @@
+---
+# app/tasks
+- yum: name=python-devel state=present
+  sudo: yes
+
+- pip: name=PyCrypto version=2.3 state=present executable=/usr/bin/pip
+  sudo: yes
+
+- pip: name=paramiko version=1.10 state=present executable=/usr/bin/pip
+  sudo: yes
+
+- pip: name=fabric version=1.8.1 state=present executable=/usr/bin/pip
+  sudo: yes
+
+- pip: name=pytz state=present executable=/usr/bin/pip
+  sudo: yes
+
+- stat: path={{dir_app}}/bin/activate
+  register: st
+
+- include: install.yml
+  when: st.stat.exists == False
+
+- name: virtualenv activate on bash, zsh
+  lineinfile: "dest={{item}} regexp='{{dir_venv}}/bin/activate' line='source {{dir_venv}}/bin/activate'"
+  with_items:
+    - "{{home}}/.bash_profile"
+    - "{{home}}/.zshrc"
+
+- name: cd on bash, zsh
+  lineinfile: "dest={{item}} regexp='^cd ' line='cd {{dir_app}}'"
+  with_items:
+    - "{{home}}/.bashrc"
+    - "{{home}}/.zshrc"
+
+- name: DJANGO_SETTINGS_MODULE on bash, zsh
+  lineinfile:
+    dest: "{{item}}"
+    regexp: "^export DJANGO_SETTINGS_MODULE"
+    line: "export DJANGO_SETTINGS_MODULE={{app_settings}}"
+  with_items:
+    - "{{home}}/.bash_profile"
+    - "{{home}}/.zshrc"
