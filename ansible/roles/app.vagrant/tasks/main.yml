@@ -19,3 +19,6 @@
   template: src=app.ini dest=/etc/supervisord.d/
   sudo: yes
   notify: restart supervisor
+
+- name: npm install
+  npm: path=/vagrant/angular

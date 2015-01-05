@@ -3,10 +3,13 @@
 
 - name: Install npm and node via EPEL yum repo
   yum: name=npm enablerepo=epel state=present
+  sudo: yes
 
 - name: update npm
   npm: global=yes name=npm state=latest
+  sudo: yes
 
 - name: Install global packages
   npm: global=yes name={{ item }} state=present
   with_items: nodejs_global_packages
+  sudo: yes

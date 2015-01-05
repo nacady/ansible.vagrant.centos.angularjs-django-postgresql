@@ -19,7 +19,7 @@
     - zsh
     - zsh.vagrant
     -
-      role: nginx
+      role: nginx.vagrant
       sudo: yes
     - python3
     - memcache
@@ -32,10 +32,9 @@
     -
       role: supervisor
       sudo: yes
-    - app
-    - app.vagrant
     -
       role: mjmaisey.ansible-nodejs
-      sudo: yes
+    - app
+    - app.vagrant
     - ruby
     - git
