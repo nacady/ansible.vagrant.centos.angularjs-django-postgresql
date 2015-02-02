@@ -12,6 +12,7 @@ app_python_bin_version: 3.4
 dir_app: "/var/www/{{app}}"
 dir_venv: "{{dir_app}}"
 app_settings: app.settings.local
+app_db: true
 
 # nginx
 nginx_rpm: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm

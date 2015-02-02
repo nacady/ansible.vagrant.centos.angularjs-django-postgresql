@@ -88,42 +88,42 @@ def _checkout():
 def _collectstatic():
     print 'collectstatic',
     sys.stdout.flush()
-    if not env.has_key('current_path'):
+    if not env.has_key('current_release'):
         _releases()
-    with cd('%(current_path)s/%(app_name)s' % env):
+    with cd('%(current_release)s/django' % env):
         r = run('%(activate)s; python manage.py collectstatic --noinput' % env, quiet=True)
     _print_result(r)
 
 def _grunt_build():
     print 'grunt build',
     sys.stdout.flush()
-    if not env.has_key('current_path'):
+    if not env.has_key('current_release'):
         _releases()
-    with cd('%(current_path)s/angular' % env):
+    with cd('%(current_release)s/angular' % env):
         r = []
         r.append(run('npm install', quiet=True))
         r.append(run('bower install', quiet=True))
         r.append(run('grunt build', quiet=True))
-        r.append(run('ln -nfs ../../%(app_name)s/assets dist/static' % env, quiet=True))
+        r.append(run('ln -nfs ../../django/assets dist/static' % env, quiet=True))
     _print_result(r)
 
 def _compilemessages():
     print 'compilemessages',
     sys.stdout.flush()
-    if not env.has_key('current_path'):
+    if not env.has_key('current_release'):
         _releases()
-    with cd('%(current_path)s/%(app_name)s' % env):
+    with cd('%(current_release)s/%(app_name)s' % env):
         r = run('%(activate)s; python manage.py compilemessages' % env, quiet=True)
     _print_result(r)
 
 def _update():
     """Copies your project and updates environment and symlink"""
     _update_code()
-    symlink()
     _update_env()
     _collectstatic()
     _grunt_build()
     #_compilemessages()
+    symlink()
 
 def _update_code():
     """Copies your project to the remote servers"""
@@ -146,19 +146,21 @@ def symlink():
 
 def _update_env():
     """Update servers environment on the remote servers"""
-    if not env.has_key('current_path'):
+    print 'pip install'
+    sys.stdout.flush()
+    if not env.has_key('current_release'):
         _releases()
 
-    with cd(env.current_path):
+    with cd(env.current_release):
         run('%(activate)s; pip install -r %(pip_file)s' % env, quiet=True)
 
 def _migrate():
     """south migrate"""
     print 'migrate',
     sys.stdout.flush()
-    if not env.has_key('current_path'):
+    if not env.has_key('current_release'):
         _releases()
-    with cd('%(current_path)s/%(app_name)s' % env):
+    with cd('%(current_release)s/django' % env):
         r = run('%(activate)s; python manage.py migrate' % env, quiet=True)
     _print_result(r)
 

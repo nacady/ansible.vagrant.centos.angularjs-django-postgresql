@@ -39,10 +39,10 @@ bindkey '^[n' history-beginning-search
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-alias ls='ls -GF'
-alias ll='ls -Flh'
-alias la='ls -Fa'
-alias lla='ls -Falh'
+alias ls='ls -GF --color'
+alias ll='ls -Flh --color'
+alias la='ls -Fa --color'
+alias lla='ls -Falh --color'
 alias grep='grep --color'
 #alias kinput2="kinput2 -wnnenvrc /etc/FreeWnn/ja/wnnenvrc"
 #alias a2ps="a2ps -o -"
