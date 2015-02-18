@@ -119,6 +119,7 @@ def _compilemessages():
 def _update():
     """Copies your project and updates environment and symlink"""
     _update_code()
+    symlink_shared()
     _update_env()
     _collectstatic()
     _grunt_build()
@@ -140,6 +141,8 @@ def symlink():
     """Updates the symlink to the most recently deployed version"""
     _releases()
     run('ln -nfs %(current_release)s %(current_path)s' % env, quiet=True)
+
+def symlink_shared():
     run('ln -nfs %(shared_path)s/media %(current_release)s/%(app_name)s/' % env, quiet=True)
     run('ln -nfs %(shared_path)s/node_modules %(current_release)s/angular/' % env, quiet=True)
     run('ln -nfs %(shared_path)s/bower_components %(current_release)s/angular/' % env, quiet=True)
