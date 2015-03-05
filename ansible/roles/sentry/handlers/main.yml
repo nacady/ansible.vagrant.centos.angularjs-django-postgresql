@@ -1,0 +1,7 @@
+---
+# sentry/handlers
+- name: restart supervisor
+  service: name=supervisord state=restarted
+
+- name: restart redis
+  service: name=redis state=restarted

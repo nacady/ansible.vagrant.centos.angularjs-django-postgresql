@@ -44,6 +44,7 @@ rabbitmq_rpm: http://www.rabbitmq.com/releases/rabbitmq-server/v3.3.5/rabbitmq-s
 # sentry
 dir_sentry: /var/www/sentry
 url_sentry: sentry.app.dev
+sentry_db: true
 
 # postgres
 postgresql_version: 9.3

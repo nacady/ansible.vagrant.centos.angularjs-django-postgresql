@@ -1,0 +1,31 @@
+---
+# sentry/tasks
+- name: init virtualenv
+  command: /usr/local/bin/virtualenv -p python2.7 {{dir_sentry}} creates="{{dir_sentry}}/bin/activate"
+
+- name: pip install
+  pip: name={{item}} virtualenv={{dir_sentry}}
+  environment:
+    PATH: "/usr/pgsql-{{postgresql_version}}/bin:{{ansible_env.PATH}}"
+  with_items:
+    - sentry
+    - psycopg2
+
+- name: make a nginx log directory
+  file: path=/var/log/nginx/{{url_sentry}} state=directory owner=nginx group=nginx
+  sudo: yes
+
+- include: db-prepare.yml
+  when: result.changed
+
+- name: config nginx
+  template: src=nginx.conf dest=/etc/nginx/conf.d/{{url_sentry}}.conf
+  sudo: yes
+
+- template: src=sentry.conf.py dest=/etc/sentry.conf.py
+  sudo: yes
+
+- name: copy sentry.ini for supervisor
+  template: src=sentry.ini dest=/etc/supervisord.d/
+  notify: restart supervisor
+  sudo: yes
